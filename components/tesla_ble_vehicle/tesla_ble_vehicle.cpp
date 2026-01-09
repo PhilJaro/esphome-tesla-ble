@@ -689,7 +689,7 @@ void TeslaBLEVehicle::handle_connection_established() {
         vehicle_->set_connected(true);
         ESP_LOGI(TAG, "Connection established - triggering initial polls");
         vehicle_->vcsec_poll();
-        vehicle_->infotainment_poll(true);
+        vehicle_->infotainment_poll();
         last_vcsec_poll_ = millis();
         last_infotainment_poll_ = millis();
     }
