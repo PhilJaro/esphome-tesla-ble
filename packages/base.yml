@@ -15,7 +15,7 @@ esphome:
   friendly_name: ${friendly_name}
   comment: ${device_description}
   project:
-    name: yoziru.esphome-tesla-ble
+    name: PhilJaro.esphome-tesla-ble
     version: "2026.1.3"
 
 logger:

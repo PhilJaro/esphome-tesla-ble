@@ -17,7 +17,7 @@ from esphome.const import (
 from esphome import automation
 
 
-CODEOWNERS = ["@yoziru"]
+CODEOWNERS = ["@PhilJaro"]
 DEPENDENCIES = ["ble_client"]
 AUTO_LOAD = ["binary_sensor", "button", "switch", "number", "sensor", "text_sensor", "lock", "cover", "climate"]
 
