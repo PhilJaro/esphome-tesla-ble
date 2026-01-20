@@ -732,7 +732,7 @@ bool VehicleStateManager::is_charger_connected_from_state(const CarServer_Charge
 std::string VehicleStateManager::get_iec61851_state_text(const CarServer_ChargeState_ChargingState& state) {
     switch (state.which_type) {
         case CarServer_ChargeState_ChargingState_Disconnected_tag: return "A";
-        case CarServer_ChargeState_ChargingState_NoPower_tag: return "E";
+        case CarServer_ChargeState_ChargingState_NoPower_tag: return "B"; //eigentlich E...
         case CarServer_ChargeState_ChargingState_Starting_tag: return "C";
         case CarServer_ChargeState_ChargingState_Charging_tag: return "C";
         case CarServer_ChargeState_ChargingState_Complete_tag: return "B";
