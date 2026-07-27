@@ -906,7 +906,8 @@ namespace esphome
         if (!command_queue_.empty())
         {
           // clear command queue if not connected or on first boot (prevent restore value triggering commands)
-          command_queue_.pop();
+          pop_command_and_tidy_up ();
+//          command_queue_.pop();
         }
         return;
       }
@@ -2181,10 +2182,10 @@ namespace esphome
         if (param->open.status == ESP_GATT_OK)
         {
           ESP_LOGI(TAG, "Connected successfully!");
-          this->status_clear_warning();
-          ble_disconnected_ = BleConnected;
-          number_updates_since_connection_ = 0; //Reset update loop counter
-          publishSensor (NumericSensorId::BleDisconnectedTime, 0);
+//          this->status_clear_warning();
+//          ble_disconnected_ = BleConnected;
+//          number_updates_since_connection_ = 0; //Reset update loop counter
+//          publishSensor (NumericSensorId::BleDisconnectedTime, 0);
 
           // generate random connection id 16 bytes
           pb_byte_t connection_id[16];
@@ -2209,7 +2210,7 @@ namespace esphome
       case ESP_GATTC_CLOSE_EVT:
       {
         ESP_LOGW(TAG, "BLE connection closed!");
-        this->node_state = espbt::ClientState::IDLE;
+//        this->node_state = espbt::ClientState::IDLE;  // Shouldn't be needed as set by the default handler
 
         ble_disconnected_ = BleDisconnected;
         // set binary sensors to unknown
@@ -2229,7 +2230,7 @@ namespace esphome
         this->handle_ = 0;
         this->read_handle_ = 0;
         this->write_handle_ = 0;
-        this->node_state = espbt::ClientState::DISCONNECTING;
+//        this->node_state = espbt::ClientState::DISCONNECTING;  // Shouldn't be needed as set by the default handler
         ESP_LOGW(TAG, "Disconnected!");
         break;
       }
@@ -2289,7 +2290,12 @@ namespace esphome
           ESP_LOGE(TAG, "reg for notify failed, error status = %x", param->reg_for_notify.status);
           break;
         }
-        this->node_state = espbt::ClientState::ESTABLISHED;
+//        this->node_state = espbt::ClientState::ESTABLISHED;
+this->set_state (espbt::ClientState::ESTABLISHED);
+        this->status_clear_warning();
+        ble_disconnected_ = BleConnected;
+        number_updates_since_connection_ = 0; //Reset update loop counter
+        publishSensor (NumericSensorId::BleDisconnectedTime, 0);
 
         unsigned char private_key_buffer[PRIVATE_KEY_SIZE];
         size_t private_key_length = 0;
