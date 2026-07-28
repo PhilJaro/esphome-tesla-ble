@@ -117,7 +117,7 @@ namespace esphome
         /*
          * If the car is asleep and the command is an Infotainment data request (identified by a "get" in the execute_name
          * field), then ignore the request as we don't want to risk waking the car.
-        */
+         */
         if (binary_sensors_[static_cast<size_t>(BinarySensorId::IsAsleep)]->state && (current_command.execute_name.find("get") == 0))
         {
           ESP_LOGI(TAG, "[%s] Car is asleep, don't wake for a 'get' command", current_command.execute_name.c_str());
@@ -902,6 +902,7 @@ namespace esphome
     void TeslaBLEVehicle::loop()
     {
       if (this->node_state != espbt::ClientState::ESTABLISHED)
+//      if (ble_disconnected_ != BleConnected)
       {
         if (!command_queue_.empty())
         {
@@ -937,6 +938,7 @@ namespace esphome
         publishSensor (NumericSensorId::BleDisconnectedTime, (millis() - ble_disconnected_time_) / 1000);
       }
       if (this->node_state == espbt::ClientState::ESTABLISHED)
+//      if (ble_disconnected_ == BleConnected)
       {
         ESP_LOGD(TAG, "Querying vehicle status update..");
         enqueueVCSECInformationRequest();
@@ -2169,7 +2171,6 @@ namespace esphome
                                               esp_ble_gattc_cb_param_t *param)
     {
       ESP_LOGV(TAG, "GATTC event %d", event);
-
       switch (event)
       {
       case ESP_GATTC_CONNECT_EVT:
@@ -2290,7 +2291,8 @@ namespace esphome
           ESP_LOGE(TAG, "reg for notify failed, error status = %x", param->reg_for_notify.status);
           break;
         }
-        this->node_state = espbt::ClientState::ESTABLISHED;
+//        this->node_state = espbt::ClientState::ESTABLISHED;
+this->parent_->set_state (espbt::ClientState::ESTABLISHED);
         this->status_clear_warning();
         ble_disconnected_ = BleConnected;
         number_updates_since_connection_ = 0; //Reset update loop counter
