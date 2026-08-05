@@ -134,7 +134,7 @@ namespace esphome
             {BLE_CarServer_VehicleAction::SET_KEEP_ACCESSORY_SWITCH,        "setKeepAccessorySwitch",    AllowedMsg::VehicleActionMessage,  CarServer_VehicleAction_setKeepAccessoryPowerModeAction_tag,  	GetOnSet::Invalid,                0},
             {BLE_CarServer_VehicleAction::GET_CHARGE_SCHEDULE_STATE,        "getChargeScheduleState",    AllowedMsg::GetVehicleDataMessage, CarServer_GetVehicleData_getChargeScheduleState_tag,          	GetOnSet::Invalid,                0},
             {BLE_CarServer_VehicleAction::DEL_CHARGING_SCHEDULE,            "delChargingSchedule",       AllowedMsg::VehicleActionMessage,  CarServer_VehicleAction_removeChargeScheduleAction_tag,         GetOnSet::GetChargeScheduleState, 0},
-            {BLE_CarServer_VehicleAction::SET_CABIN_OVERHEAT_PROTECTION,    "setCabinOverheatProtection",AllowedMsg::VehicleActionMessage,  CarServer_VehicleAction_setCabinOverheatProtectionAction_tag,   GetOnSet::Invalid,                0},
+            {BLE_CarServer_VehicleAction::SET_CABIN_OVERHEAT_PROTECTION,    "setCabinOverheatProtection",AllowedMsg::VehicleActionMessage,  CarServer_VehicleAction_setCabinOverheatProtectionAction_tag,   GetOnSet::GetClimateState,                0},
         }};
         static_assert(ACTION_SPECIFICS.size() == static_cast<std::size_t>(BLE_CarServer_VehicleAction::_COUNT), "ACTION_SPECIFICS out of sync with enum");
         static const char *const TAG = "tesla_ble_vehicle";
