@@ -2292,7 +2292,7 @@ namespace esphome
           break;
         }
 //        this->node_state = espbt::ClientState::ESTABLISHED;
-this->parent_->set_state (espbt::ClientState::ESTABLISHED);
+        this->parent_->set_state (espbt::ClientState::ESTABLISHED);
         this->status_clear_warning();
         ble_disconnected_ = BleConnected;
         number_updates_since_connection_ = 0; //Reset update loop counter
