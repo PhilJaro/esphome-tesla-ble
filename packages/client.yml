@@ -398,11 +398,9 @@ switch:
     turn_on_action:
       - lambda: |-
           id(tesla_ble_vehicle_id)->sendCarServerVehicleActionMessage (tesla_ble_vehicle::BLE_CarServer_VehicleAction::DEFROST_CAR, 1);
-          id(tesla_ble_vehicle_id)->sendCarServerVehicleActionMessage (tesla_ble_vehicle::BLE_CarServer_VehicleAction::GET_CLIMATE_STATE, 0);
     turn_off_action:
       - lambda: |-
           id(tesla_ble_vehicle_id)->sendCarServerVehicleActionMessage (tesla_ble_vehicle::BLE_CarServer_VehicleAction::DEFROST_CAR, 0);
-          id(tesla_ble_vehicle_id)->sendCarServerVehicleActionMessage (tesla_ble_vehicle::BLE_CarServer_VehicleAction::GET_CLIMATE_STATE, 0);
 
   - platform: template
     id: fast_poll_if_unlocked
@@ -723,6 +721,5 @@ select:
               param = CarServer_SetCabinOverheatProtectionAction_fan_only_tag;
             }
             id(tesla_ble_vehicle_id)->sendCarServerVehicleActionMessage (tesla_ble_vehicle::BLE_CarServer_VehicleAction::SET_CABIN_OVERHEAT_PROTECTION, param);
-            id(tesla_ble_vehicle_id)->sendCarServerVehicleActionMessage (tesla_ble_vehicle::BLE_CarServer_VehicleAction::GET_CLIMATE_STATE, 0);
           }
     disabled_by_default: true
