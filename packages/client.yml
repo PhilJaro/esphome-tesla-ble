@@ -30,7 +30,7 @@ esphome:
               "\n**********************************************************************************************");
           // EUI-48 (IEEE 802) defines a 48-bit MAC address as 6 colon-separated hex octets (XX:XX:XX:XX:XX:XX):
           // 12 hex digits + 5 colons = 17 characters, so sizeof == 18 including the null terminator.
-          static_assert("$ble_mac_address" != "00:00:00:00:00:00",
+          static_assert (std::string_view ("$ble_mac_address") != "00:00:00:00:00:00",
               "\n\n**********************************************************************************************"
               "\n***                                  IMPORTANT                                             ***"
               "\n***                                  =========                                             ***"
@@ -60,6 +60,7 @@ tesla_ble_vehicle:
   vin: $tesla_vin
   charger_switch: sw_charger
   defrost_switch: sw_defrost_car
+  cabin_overheat_protection: sel_cabin_overheat_protection
   update_interval: 10s # default
   post_wake_poll_time: 300 # How long to poll for data after car awakes (s)
   poll_data_period: 60 # Normal period when polling for data when not asleep (s)
@@ -299,12 +300,12 @@ switch:
     name: "Charger"
     optimistic: true
     icon: mdi:lightning-bolt
-    lambda: |-
-      if ((id(charging_state).state == "Charging") or (id(charging_state).state == "Starting") or (id(charging_state).state == "Calibrating")) {
-        return true;
-      } else {
-        return false;
-      }
+#    lambda: |-
+#      if ((id(charging_state).state == "Charging") or (id(charging_state).state == "Starting") or (id(charging_state).state == "Calibrating")) {
+#        return true;
+#      } else {
+#        return false;
+#      }
     turn_on_action:
       - lambda: |-
           if (id(tesla_ble_vehicle_id).get_charging_state_raw() != CarServer_ChargeState_ChargingState_Complete_tag) { // Don't allow charging if last session has completed and no more configured
@@ -388,16 +389,18 @@ switch:
     name: Defrost car
     optimistic: true
     icon: mdi:snowflake-melt
-    lambda: |-
-      if (id(defrost_state).state != "Off") {
-        return true;
-      } else {
-        return false;
-      }
+#    lambda: |-
+#      if (id(defrost_state).state != "Off") {
+#        return true;
+#      } else {
+#        return false;
+#      }
     turn_on_action:
-      - lambda: id(tesla_ble_vehicle_id)->sendCarServerVehicleActionMessage (tesla_ble_vehicle::BLE_CarServer_VehicleAction::DEFROST_CAR, 1);
+      - lambda: |-
+          id(tesla_ble_vehicle_id)->sendCarServerVehicleActionMessage (tesla_ble_vehicle::BLE_CarServer_VehicleAction::DEFROST_CAR, 1);
     turn_off_action:
-      - lambda: id(tesla_ble_vehicle_id)->sendCarServerVehicleActionMessage (tesla_ble_vehicle::BLE_CarServer_VehicleAction::DEFROST_CAR, 0);
+      - lambda: |-
+          id(tesla_ble_vehicle_id)->sendCarServerVehicleActionMessage (tesla_ble_vehicle::BLE_CarServer_VehicleAction::DEFROST_CAR, 0);
 
   - platform: template
     id: fast_poll_if_unlocked
@@ -690,4 +693,33 @@ text:
             return;
           }
           id(tesla_ble_vehicle_id)->sendCarServerVehicleActionMessage(tesla_ble_vehicle::BLE_CarServer_VehicleAction::DEL_CHARGING_SCHEDULE, 0, id);
+    disabled_by_default: true
+
+select:
+  - platform: template
+    name: "Cabin overheat protection"
+    id: sel_cabin_overheat_protection
+    icon: mdi:heat-wave
+    options:
+      - "Off"
+      - "On"
+      - "Fan"
+      - "Unknown"
+    initial_option: "Unknown"
+    set_action:
+      - lambda: |-
+          int param = 0;
+          if (x != "Unknown")
+          {
+            //if (x == "Off") // do nothing as param = 0
+            if (x == "On")
+            {
+              param = CarServer_SetCabinOverheatProtectionAction_on_tag;
+            }
+            else if (x == "Fan")
+            {
+              param = CarServer_SetCabinOverheatProtectionAction_fan_only_tag;
+            }
+            id(tesla_ble_vehicle_id)->sendCarServerVehicleActionMessage (tesla_ble_vehicle::BLE_CarServer_VehicleAction::SET_CABIN_OVERHEAT_PROTECTION, param);
+          }
     disabled_by_default: true
